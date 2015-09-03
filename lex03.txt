@@ -1,0 +1,133 @@
+%{
+/****************************************************************************
+mylexer.l
+ParserWizard generated Lex file.
+
+Date: Wednesday, January 22, 2014
+****************************************************************************/
+
+#include "myparser.h"
+#include <stdio.h>
+%}
+
+/////////////////////////////////////////////////////////////////////////////
+// declarations section
+
+// lexical analyser name
+%name mylexer
+
+// class definition
+{
+	// place any extra class members here
+}
+
+// constructor
+{
+	// place any extra initialisation code here
+}
+
+// destructor
+{
+	// place any extra cleanup code here
+}
+
+// place any declarations here
+
+%%
+
+/////////////////////////////////////////////////////////////////////////////
+// rules section
+
+%{
+	// extract yylval for use later on in actions
+	YYSTYPE YYFAR& yylval = *(YYSTYPE YYFAR*)yyparserptr->yylvalptr;
+%}
+
+// place your Lex rules here
+//white space
+[\b\t]+   ;
+
+//new line
+\n  ;
+
+//Keyword
+"var"  { return VAR ; }
+"program"   { return PROGRAM; }
+"if"  { return IF;}
+"not"    { return NOT; }
+"end"	 { return END ; }
+"begin"  { return BEGIN ; }
+"else"  { return ELSE ; }
+"than"  { return THAN ; }
+"do"   { return DO ; }
+"while"   { return WHILE ; }
+"function"    { return FUNCTION ; }
+"Procedure"   { return PROCEDURE ; }
+"integer"  { return INTEGER ; }
+"real"   { return REAL ; } 
+
+"array"   { return ARRAY ; }
+"write"   { return WRITE ; }
+"or"   { return OR ; }
+
+//variable
+[a-zA-Z_]+[a-zA-Z_0-9]*  { return VARIABLE; }
+
+
+
+
+//NUMBER
+[0-9]+  { return NUMBER; }
+[0-9]*"."[0-9]+  { return Fraction_NUM; }
+[0-9]+[eE][+ -]?[0-9]+|[0-9]*"."[0-9]+[eE][+-]?[0-9]+   { return Normal_Exponent; } 
+
+//LP
+"("   {return LP;}
+
+//RP
+")"   {return RP;}
+
+//string
+\"[^\"]*\"  { return STRING;}		
+
+//comment
+"{"[a-z A-Z0-9#&$@ ]*"}"   { printf("comment");}
+
+//relational operator
+"<"|"<>"|"<="|">="|">"|"="     { return REL_OP; }
+
+//addop
+"+"|"-"  { return ADD_OP; }
+ 
+//mulop
+"*"|"/"  { return MUL_OP; } 
+
+//assignop
+":="   { return ASSIGN_OP; }
+ 
+//dotdot
+"["|".."|"]"   { return DOTDOT; }
+
+//comma
+","   { return COMMA;}
+ 
+//colon
+";"   { return SEMI; }
+
+//SEMI
+":"   { return COLON; }
+
+//single line coment
+
+"//"[^\n].+  { printf ("single line comment "); }
+
+//multiple line coment
+"/*".+"*/"  { printf("Multiple line comment "); }
+
+
+
+%%
+
+/////////////////////////////////////////////////////////////////////////////
+// programs section
+

@@ -1,0 +1,217 @@
+%{
+/****************************************************************************
+mylexer.l
+ParserWizard generated Lex file.
+
+Date: Thursday, December 19, 2013
+****************************************************************************/
+#include <stdio.h>
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<ctype.h>
+#include<string.h>
+int lineNo=0;
+
+int hashing(char *s);
+void insertion(int row, char *name, char *type);
+void display();
+
+
+struct list
+{
+    char name[50];
+    char type[50];
+    struct list *next;
+};
+
+typedef struct list node;
+node *start[56];
+
+
+int hashing(char *s)
+{
+    int i=0, sum=0, temp,h;
+    while(s[i] != '\0')
+    {
+        temp = s[i];      //converting to ASCII
+        sum = sum + temp; //Ascii sum
+        i++;
+    }
+    h = sum % 57;         //hashing value
+    return h;
+}
+
+void insertion(char *name, char *type)
+{
+	int row;
+	row = hashing(name);
+    node *temp;
+    if(start[row] == NULL)
+    {
+        temp = (node*) malloc(sizeof(node));
+        strcpy(temp->name,name);
+        strcpy(temp->type,type);
+        temp->next =NULL;
+        start[row] = temp;
+    }
+    else
+    {
+        temp = (node*) malloc(sizeof(node));
+        strcpy(temp->name,name);
+        strcpy(temp->type, type);
+        temp->next = start[row];
+        start[row] = temp;
+    }
+
+    printf("\nSucessfully inserted!\n");
+
+
+}
+
+void display()
+{
+    node *temp;
+    printf("\nCreated table:\n");
+
+    int i;
+    for(i=0; i<=56; i++)
+    {
+        temp = start[i];
+        printf("row[%d]",i);
+        while(temp!= NULL)
+        {
+            printf("<%s %s>   \t ", temp->name, temp->type);
+            temp = temp->next;
+        }
+        printf("\n");
+    }
+
+
+}
+
+
+
+
+%}
+
+/////////////////////////////////////////////////////////////////////////////
+// declarations section
+
+// lexical analyser name
+%name mylexer
+
+// class definition
+{
+	// place any extra class members here
+}
+
+// constructor
+{
+	// place any extra initialisation code here
+}
+
+// destructor
+{
+	// place any extra cleanup code here
+}
+
+// place any declarations here
+
+%%
+
+/////////////////////////////////////////////////////////////////////////////
+// rules section
+
+// place your Lex rules here
+
+
+"show" {display();}
+
+//white space
+[\b\t]+   ;
+
+//new line
+\n {
+		lineNo ++;
+		printf("Line %d  ", lineNo);
+		}
+
+//Keyword
+"program"   { printf("PROGRAM "); }
+"if"  { printf("IF ");}
+"not"    { printf("NOT "); }
+"end"	 { printf("END "); }
+"begin"  { printf("BEGIN "); }
+"else"  { printf("ELSE "); }
+"than"  { printf("THAN "); }
+"do"   { printf("DO "); }
+"while"   { printf("WHILE "); }
+"function"    { printf("FUNCTION "); }
+"Procedure"   { printf("PROCEDURE "); }
+"integer"  { printf("INTEGER "); }
+"real"   { printf("REAL "); } 
+"var"  { printf("VAR "); }
+"array"   { printf("ARRAY "); }
+"write"   { printf("WRITE "); }
+"or"   { printf("OR "); }
+
+//variable
+[a-zA-Z_]+[a-zA-Z_0-9]*  {	insertion(yytext,"id");
+							printf("variable "); }
+
+
+
+
+//NUMBER
+[0-9]+  { printf("NUMBER "); }
+[0-9]*"."[0-9]+  { printf("Fraction_NUM "); }
+[0-9]+[eE][+ -]?[0-9]+|[0-9]*"."[0-9]+[eE][+-]?[0-9]+   { printf("Normal Exponent "); } 
+
+
+		
+		
+//string
+\"[^\"]*\"  { printf("string "); }		
+
+//comment
+"{"[a-z A-Z0-9#&$@ ]*"}"   { printf("comment "); }
+
+//relational operator
+"<"|"<>"|"<="|">="|">"|"="     {	insertion(yytext,"RELOP");
+									printf("REL_OP "); }
+
+//addop
+"+"|"-"  { printf("ADD_OP "); }
+
+//mulop
+"*"|"/"  { printf("MUL_OP "); }
+
+//assignop
+":="   { printf("ASSIGN_OP "); }
+ 
+//dotdot
+"("|"["|".."|")"|"]"   { printf("DOTDOT "); }
+
+//comma
+","   { printf("COMMA ");}
+ 
+//colon
+";"|":"   { printf("COLON "); }
+
+//single line coment
+
+"//"[^\n].+  { printf("single line comment "); }
+
+//multiple line coment
+"/*".+"*/"  { printf("Multiple line comment "); }
+
+
+
+
+%%
+
+/////////////////////////////////////////////////////////////////////////////
+// programs section
+
+

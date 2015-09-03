@@ -1,0 +1,161 @@
+%{
+/****************************************************************************
+myparser.y
+ParserWizard generated YACC file.
+
+Date: Sunday, January 19, 2014
+****************************************************************************/
+
+#include "mylexer.h"
+#include "stdio.h"
+%}
+
+/////////////////////////////////////////////////////////////////////////////
+%token PROGRAM IF NOT END BEGIN ELSE THAN WHILE FUNCTION PROCEDURE INTEGER DO LP RP
+%token REAL VAR ARRAY WRITE OR VARIABLE NUMBER Fraction_NUM Normal_Exponent STRING
+%token REL_OP ADD_OP MUL_OP ASSIGN_OP DOTDOT COMMA COLON SEMI
+
+%left ADD_OP 
+%left MUL_OP
+ 
+// parser name
+%name myparser
+
+// class definition
+{
+	// place any extra class members here
+}
+
+// constructor
+{
+	// place any extra initialisation code here
+}
+
+// destructor
+{
+	// place any extra cleanup code here
+}
+
+// attribute type
+%include {
+#ifndef YYSTYPE
+#define YYSTYPE int
+#endif
+}
+
+// place any declarations here
+
+%%
+
+/////////////////////////////////////////////////////////////////////////////
+// rules section
+
+// place your YACC rules here (there must be at least one)
+
+program: 
+		PROGRAM VARIABLE LP var_list RP SEMI  { printf("prog ->PROGRAM VARIABLE LP var_list RP SEMI\n");}
+		var_declarations    { printf("prog ->var_declarations\n");}
+		functions		{ printf("prog ->functions\n");}
+		compound_stat	{ printf("prog ->compound_stat\n");}
+	   ;
+	   
+var_list:
+		 VARIABLE		{ printf("var_list ->VARIABLE\n");}
+		|var_list COMMA VARIABLE	{ printf("var_list ->var_list COMMA VARIABLE\n");}
+		;
+		
+var_declarations:
+		    
+			 |VAR declaration SEMI { printf("var_declarations ->VAR declaration SEMI\n");}
+			 ;
+			 
+declaration:
+			var_list COLON type  { printf("declarations ->var_list COLON type\n");}
+			;
+			 
+type: 
+	INTEGER   { printf("type->INTEGER \n");}
+	|REAL		{ printf("type->REAL \n");}
+	;
+	
+functions:	
+			|FUNCTION function_declaration compound_stat { printf("functions ->FUNCTION function_declaration compound_stat \n");}
+			;
+			
+function_declaration: 
+					 VARIABLE LP declaration RP COLON type COLON  { printf("function_declaration ->VARIABLE LP declaration RP COLON type COLON \n");}
+					;
+					
+compound_stat:
+				BEGIN	{ printf("compound_stat -> BEGIN \n");}
+				statement_list   { printf("compound_stat -> stat_list  \n");}
+				END SEMI  { printf("compound_stat -> END SEMI \n");}
+			; 
+			
+statement_list:
+				statement   { printf("stat_list -> stat \n");}
+			   |statement_list SEMI statement   { printf("stat_list -> stat_list SEMI stat \n");}
+			   
+			   ;
+			   
+statement:
+		 IF expression_list THAN expression_list	{ printf("stat -> IF exp_list THAN exp_list \n");}
+		|IF expression_list THAN expression_list ELSE expression_list { printf("stat -> IF exp_list THAN exp_list ELSE exp_list \n");}
+		|WHILE expression_list DO statement  { printf("stat -> WHILE exp_list DO statement  \n");}
+		|VARIABLE ASSIGN_OP expression_list   { printf("stat -> VARIABLE ASSIGN_OP exp_list  \n");}
+		|expression ASSIGN_OP func_call   { printf("stat -> exp ASSIGN_OP func_call \n");}
+		|expression_list   { printf("stat -> exp_list \n");}
+		;
+		
+expression_list:
+				expression   { printf("exp_list -> exp\n");}
+				|sign expression { printf("exp_list -> sign exp\n");}	
+				|expression COMMA expression  { printf("exp_list -> exp COMMA exp \n");}
+				|expression REL_OP expression  { printf("exp_list -> exp REL_OP exp \n");}
+				|expression ASSIGN_OP expression { printf("exp_list -> exp ASSIGN_OP exp \n");}
+				;
+				
+expression: 
+		   term  { printf("exp -> term\n");}
+		   |expression ADD_OP term  { printf("exp -> exp ADD_OP term \n");}
+		   |expression MUL_OP term	{ printf("exp -> exp MUL_OP  term \n");}
+		   ;
+term:
+		   
+	VARIABLE   { printf("term -> VARIABLE  \n");}
+	|NUMBER   { printf("term -> NUMBER   \n");}
+	|Fraction_NUM   { printf("term -> Fraction_NUM    \n");}
+	|Normal_Exponent  { printf("term -> Normal_Exponent \n");}
+	;
+func_call: 
+		  VARIABLE ASSIGN_OP VARIABLE LP expression_list RP  { printf("func_call ->VARIABLE ASSIGN_OP VARIABLE LP expression_list RP \n");}
+		 ;
+		
+sign: 
+	 '+'   { printf("sign -> + \n");}
+	 |'-'	 { printf("sign -> - \n");}
+	 
+	 ;	
+
+%%
+
+/////////////////////////////////////////////////////////////////////////////
+// programs section
+
+int main(void)
+{
+	int n = 1;
+	mylexer lexer;
+	myparser parser;
+	if (parser.yycreate(&lexer)) {
+		if (lexer.yycreate(&parser)) {
+			n = parser.yyparse();
+		}
+	}
+	return n;
+}
+
+	
+
+			
+ 
